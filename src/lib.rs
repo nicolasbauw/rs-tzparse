@@ -9,14 +9,14 @@ use std::convert::TryInto;
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Tzdata {
-    utc_datetime: DateTime<Utc>,
-    datetime: DateTime<FixedOffset>,
-    dst_from: Option<DateTime<Utc>>,
-    dst_until: Option<DateTime<Utc>>,
-    raw_offset: isize,
-    dst_offset: isize,
-    utc_offset: FixedOffset,
-    abbreviation: String,
+    pub utc_datetime: DateTime<Utc>,
+    pub datetime: DateTime<FixedOffset>,
+    pub dst_from: Option<DateTime<Utc>>,
+    pub dst_until: Option<DateTime<Utc>>,
+    pub raw_offset: isize,
+    pub dst_offset: isize,
+    pub utc_offset: FixedOffset,
+    pub abbreviation: String,
 }
 
 #[derive(Debug, PartialEq, Eq, Clone)]
