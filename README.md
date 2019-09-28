@@ -1,4 +1,4 @@
-# TZfile data reader library
+# TZfile data parse library
 
 This library is using the TZfile reading library (https://github.com/nicolasbauw/rs-tzfile).
 This library's functions are used to retrieve time changes and characteristics for a given TZ.
