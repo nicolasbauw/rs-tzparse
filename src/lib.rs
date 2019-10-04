@@ -31,7 +31,7 @@ pub struct Timechange {
 [Timechange { time: 2019-03-31T01:00:00Z, gmtoff: 7200, isdst: true, abbreviation: "CEST" },
 Timechange { time: 2019-10-27T01:00:00Z, gmtoff: 3600, isdst: false, abbreviation: "CET" }]*/
 
-pub fn get(requested_timezone: &str, year: i32) -> Option<Vec<Timechange>> {
+pub fn get(requested_timezone: &str, y: Option<i32>) -> Option<Vec<Timechange>> {
     // Opens TZfile
     let buffer = match Tzfile::read(&requested_timezone) {
         Ok(b) => b,
@@ -62,6 +62,15 @@ pub fn get(requested_timezone: &str, year: i32) -> Option<Vec<Timechange>> {
     // Used to store parsed useful data
     let mut parsedtimechanges = Vec::new();
 
+    // Provides year or current year by default
+    let year: i32 = match y {
+        Some(y) => y,
+        None => {
+            let d = Utc::now();
+            d.format("%Y").to_string().parse().unwrap()
+                }
+    };
+    
     // for year comparison
     let currentyearbeg = Utc.ymd(year, 1, 1).and_hms(0, 0, 0);
     let currentyearend = Utc.ymd(year, 12, 31).and_hms(0, 0, 0);
