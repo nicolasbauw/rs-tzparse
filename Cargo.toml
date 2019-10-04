@@ -8,4 +8,4 @@ edition = "2018"
 
 [dependencies]
 chrono = "0.4"
-tzfile = { git = "https://github.com/nicolasbauw/rs-tzfile.git" }
+tzfile = { git = "https://github.com/nicolasbauw/rs-tzfile.git", tag="v0.1.0" }
