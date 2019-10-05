@@ -9,7 +9,6 @@ use std::convert::TryInto;
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Tzdata {
-    pub timezone: String,
     pub utc_datetime: DateTime<Utc>,
     pub datetime: DateTime<FixedOffset>,
     pub dst_from: Option<DateTime<Utc>>,
@@ -117,7 +116,7 @@ pub fn get(requested_timezone: &str, y: Option<i32>) -> Option<Vec<Timechange>> 
 Tzdata { utc_datetime: 2019-09-27T07:04:09.366157Z, datetime: 2019-09-27T09:04:09.366157+02:00, dst_from: Some(2019-03-31T01:00:00Z), dst_until: Some(2019-10-27T01:00:00Z),
 raw_offset: 3600, dst_offset: 7200, utc_offset: +02:00, abbreviation: "CEST" }*/
 
-pub fn worldtime(requested_timezone: &str, parsedtimechanges: Vec<Timechange>) -> Option<Tzdata> {
+pub fn worldtime(parsedtimechanges: Vec<Timechange>) -> Option<Tzdata> {
     let d = Utc::now();
     if parsedtimechanges.len() == 2 {
         // 2 times changes the same year ? DST observed
@@ -127,7 +126,6 @@ pub fn worldtime(requested_timezone: &str, parsedtimechanges: Vec<Timechange>) -
         let utc_offset = if dst == true { FixedOffset::east(parsedtimechanges[0].gmtoff as i32) } else { FixedOffset::east(parsedtimechanges[1].gmtoff as i32) };
         //println!("{}", dst);
         Some(Tzdata {
-            timezone: requested_timezone.to_string(),
             utc_datetime: d,
             datetime: d.with_timezone(&utc_offset),
             dst_from: Some(parsedtimechanges[0].time),
@@ -141,7 +139,6 @@ pub fn worldtime(requested_timezone: &str, parsedtimechanges: Vec<Timechange>) -
     } else if parsedtimechanges.len()==1 {
         let utc_offset = FixedOffset::east(parsedtimechanges[0].gmtoff as i32);
         Some(Tzdata {
-            timezone: requested_timezone.to_string(),
             utc_datetime: d,
             datetime: d.with_timezone(&utc_offset),
             dst_from: None,
