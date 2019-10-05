@@ -8,7 +8,7 @@ See also the world-time-api (https://github.com/nicolasbauw/world-time-api)
 
 ## get
 
-get("Europe/Paris", 2019)
+get("Europe/Paris", Some(2019))
 
 The get function returns an Option enum of Vec< Timechange > , output sample for Europe/Paris 2019:
 

@@ -27,7 +27,8 @@ pub struct Timechange {
     abbreviation: String
 }
 
-/* Returns Option enum of Timechange vec, output sample for Europe/Paris 2019:
+/* Input : timezone, and optional year (defaults to current year)
+Returns Option enum of Timechange vec, output sample for Europe/Paris in 2019:
 [Timechange { time: 2019-03-31T01:00:00Z, gmtoff: 7200, isdst: true, abbreviation: "CEST" },
 Timechange { time: 2019-10-27T01:00:00Z, gmtoff: 3600, isdst: false, abbreviation: "CET" }]*/
 
@@ -59,7 +60,7 @@ pub fn get(requested_timezone: &str, y: Option<i32>) -> Option<Vec<Timechange>> 
     let mut timechanges = Vec::new();
     let mut nearest_timechange: usize = 0;
 
-    // Used to store parsed useful data
+    // Used to store parsed timechanges
     let mut parsedtimechanges = Vec::new();
 
     // Provides year or current year by default
