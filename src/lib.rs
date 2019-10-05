@@ -22,10 +22,10 @@ pub struct Tzdata {
 
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Timechange {
-    time: DateTime<Utc>,
-    gmtoff: isize,
-    isdst: bool,
-    abbreviation: String
+    pub time: DateTime<Utc>,
+    pub gmtoff: isize,
+    pub isdst: bool,
+    pub abbreviation: String
 }
 
 /* Input : timezone, and optional year (defaults to current year)
@@ -116,7 +116,7 @@ pub fn get(requested_timezone: &str, y: Option<i32>) -> Option<Vec<Timechange>> 
 Tzdata { utc_datetime: 2019-10-05T14:30:13.600249800Z, datetime: 2019-10-05T16:30:13.600249800+02:00, dst_from: Some(2019-03-31T01:00:00Z),
 dst_until: Some(2019-10-27T01:00:00Z), dst_period: true, raw_offset: 3600, dst_offset: 7200, utc_offset: +02:00, abbreviation: "CEST" }*/
 
-pub fn worldtime(parsedtimechanges: Vec<Timechange>) -> Option<Tzdata> {
+pub fn worldtime(parsedtimechanges: &Vec<Timechange>) -> Option<Tzdata> {
     let d = Utc::now();
     if parsedtimechanges.len() == 2 {
         // 2 times changes the same year ? DST observed
