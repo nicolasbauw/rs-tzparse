@@ -2,7 +2,7 @@
 
 This library is using the TZfile reading library (https://github.com/nicolasbauw/rs-tzfile).
 This library's functions are used to retrieve time changes and characteristics for a given TZ.
-It uses system TZfiles (default location on Linux and Macos /usr/share/zoneinfo). You can override the TZfiles default location with the DATA_ROOT environment variable (ending by a /).
+It uses system TZfiles (default location on Linux and Macos /usr/share/zoneinfo). You can override the TZfiles default location with the TZFILES_DIR environment variable.
 There are two functions described below.
 See also the world-time-api (https://github.com/nicolasbauw/world-time-api)
 

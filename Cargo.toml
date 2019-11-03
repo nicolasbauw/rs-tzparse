@@ -1,6 +1,6 @@
 [package]
 name = "tzparse"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Nicolas BAUW <nbauw@hotmail.com>"]
 edition = "2018"
 
@@ -8,4 +8,4 @@ edition = "2018"
 
 [dependencies]
 chrono = "0.4"
-tzfile = { git = "https://github.com/nicolasbauw/rs-tzfile.git", tag="v0.1.0" }
+tzfile = { git = "https://github.com/nicolasbauw/rs-tzfile.git", tag="v0.2.0" }
