@@ -13,7 +13,7 @@
 //! 
 //! fn main() {
 //!     match tzparse::get_timechanges("Europe/Paris", Some(2019)) {
-//!         Some(tz) => println!("{:?}", tzparse::get_zoneinfo(tz).unwrap()),
+//!         Some(tz) => println!("{:?}", tzparse::get_zoneinfo(&tz).unwrap()),
 //!         None => println!("Timezone not found")
 //!     };
 //! }
@@ -187,3 +187,14 @@ pub fn get_zoneinfo(parsedtimechanges: &Vec<Timechange>) -> Option<Tzinfo> {
     } else { None }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    fn zoneinfo() {
+        let tz = vec!(Timechange{time: Utc.ymd(2019, 3, 31).and_hms(1, 0, 0), gmtoff: 7200, isdst: true, abbreviation: "CEST".to_string()},
+            Timechange{time: Utc.ymd(2019, 10, 27).and_hms(1, 0, 0), gmtoff: 3600, isdst: false, abbreviation: "CET".to_string()});
+        assert_eq!(get_timechanges("Europe/Paris", Some(2019)).unwrap(), tz);
+    }
+}
