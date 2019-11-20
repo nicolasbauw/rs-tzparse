@@ -1,12 +1,40 @@
-//! This library's functions are used to retrieve time changes and date / time characteristics for a given TZ.
-//! Based on data provided by system timezone files and low-level parsing library (https://crates.io/crates/libtzfile)
+//! This library's functions are used to retrieve time changes and date/time characteristics for a given TZ.
+//! Based on data provided by system timezone files and [low-level parsing library](https://crates.io/crates/libtzfile).
+//! System TZfiles default location can be overriden  with the TZFILES_DIR environment variable.
+//!
+//! There are two functions, one using the other's result:
+//! 
+//! get_timechanges obtains time changes for specified year.
+//! get_zoneinfo further parses the data to provide useful and human-readable output.
+//!
+//! Example with get_zoneinfo:
+//! ```
+//! extern crate tzparse;
+//! 
+//! fn main() {
+//!     match tzparse::get_timechanges("Europe/Paris", Some(2019)) {
+//!         Some(tz) => println!("{:?}", tzparse::get_zoneinfo(tz).unwrap()),
+//!         None => println!("Timezone not found")
+//!     };
+//! }
+//! ```
+//!
+//! Outputs:
+//!
+//! { utc_datetime: 2019-09-27T07:04:09.366157Z, datetime: 2019-09-27T09:04:09.366157+02:00, dst_from: Some(2019-03-31T01:00:00Z), dst_until: Some(2019-10-27T01:00:00Z),
+//! raw_offset: 3600, dst_offset: 7200, utc_offset: +02:00, abbreviation: "CEST" }
+//!
+//! The get_timechanges ouputs:
+//!
+//! [Timechange { time: 2019-03-31T01:00:00Z, gmtoff: 7200, isdst: true, abbreviation: "CEST" },
+//! Timechange { time: 2019-10-27T01:00:00Z, gmtoff: 3600, isdst: false, abbreviation: "CET" }]
 
 extern crate libtzfile;
 use chrono::prelude::*;
 use libtzfile::*;
 use std::convert::TryInto;
 
-/// Convenient and human-readable informations about a timezone
+/// Convenient and human-readable informations about a timezone.
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Tzinfo {
     /// UTC time
@@ -29,24 +57,20 @@ pub struct Tzinfo {
     pub abbreviation: String,
 }
 
-/// The Timechange struct contains one timechange from the parsed TZfile
+/// The Timechange struct contains one timechange from the parsed TZfile.
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Timechange {
     /// The UTC time and date of the timechange, BEFORE new parameters apply
     pub time: DateTime<Utc>,
     /// The UPCOMING offset to GMT
     pub gmtoff: isize,
-    /// Is upcoming change is dst ?
+    /// Is upcoming change dst ?
     pub isdst: bool,
     /// TZ abbreviation of upcoming change
     pub abbreviation: String
 }
 
-/* Input : timezone, and optional year (defaults to current year)
-Returns Option enum of Timechange vec, output sample for Europe/Paris in 2019:
-[Timechange { time: 2019-03-31T01:00:00Z, gmtoff: 7200, isdst: true, abbreviation: "CEST" },
-Timechange { time: 2019-10-27T01:00:00Z, gmtoff: 3600, isdst: false, abbreviation: "CET" }]*/
-
+/// Returns year's (current year is default) timechanges for a timezone.
 pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<Timechange>> {
     // Opens TZfile
     let buffer = match Tzfile::read(&requested_timezone) {
@@ -78,7 +102,7 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<T
     // Used to store parsed timechanges
     let mut parsedtimechanges = Vec::new();
 
-    // Provides year (or current year by default)
+    // Provided year (or current year by default)
     let year: i32 = match y {
         Some(y) => y,
         None => {
@@ -126,10 +150,7 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<T
     Some(parsedtimechanges)
 }
 
-/* Returns Option enum of Tzdata struct, containing convenient data about a timezone. output sample:
-Tzdata { utc_datetime: 2019-10-05T14:30:13.600249800Z, datetime: 2019-10-05T16:30:13.600249800+02:00, dst_from: Some(2019-03-31T01:00:00Z),
-dst_until: Some(2019-10-27T01:00:00Z), dst_period: true, raw_offset: 3600, dst_offset: 7200, utc_offset: +02:00, abbreviation: "CEST" }*/
-
+/// Returns convenient data about a timezone. Used for example in my [world time API](https://github.com/nicolasbauw/world-time-api).
 pub fn get_zoneinfo(parsedtimechanges: &Vec<Timechange>) -> Option<Tzinfo> {
     let d = Utc::now();
     if parsedtimechanges.len() == 2 {
