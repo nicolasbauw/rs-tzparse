@@ -1,14 +1,12 @@
-/* This library's functions are used to retrieve
-time changes and characteristics for a given TZ.
-See function comments for output sample. */
+//! This library's functions are used to retrieve time changes and date / time characteristics for a given TZ.
 
-extern crate tzfile;
+extern crate libtzfile;
 use chrono::prelude::*;
-use tzfile::*;
+use libtzfile::*;
 use std::convert::TryInto;
 
 #[derive(Debug, PartialEq, Eq, Clone)]
-pub struct Tzdata {
+pub struct Tzinfo {
     pub utc_datetime: DateTime<Utc>,
     pub datetime: DateTime<FixedOffset>,
     pub dst_from: Option<DateTime<Utc>>,
@@ -33,7 +31,7 @@ Returns Option enum of Timechange vec, output sample for Europe/Paris in 2019:
 [Timechange { time: 2019-03-31T01:00:00Z, gmtoff: 7200, isdst: true, abbreviation: "CEST" },
 Timechange { time: 2019-10-27T01:00:00Z, gmtoff: 3600, isdst: false, abbreviation: "CET" }]*/
 
-pub fn get(requested_timezone: &str, y: Option<i32>) -> Option<Vec<Timechange>> {
+pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<Timechange>> {
     // Opens TZfile
     let buffer = match Tzfile::read(&requested_timezone) {
         Ok(b) => b,
@@ -116,7 +114,7 @@ pub fn get(requested_timezone: &str, y: Option<i32>) -> Option<Vec<Timechange>> 
 Tzdata { utc_datetime: 2019-10-05T14:30:13.600249800Z, datetime: 2019-10-05T16:30:13.600249800+02:00, dst_from: Some(2019-03-31T01:00:00Z),
 dst_until: Some(2019-10-27T01:00:00Z), dst_period: true, raw_offset: 3600, dst_offset: 7200, utc_offset: +02:00, abbreviation: "CEST" }*/
 
-pub fn worldtime(parsedtimechanges: &Vec<Timechange>) -> Option<Tzdata> {
+pub fn get_zoneinfo(parsedtimechanges: &Vec<Timechange>) -> Option<Tzinfo> {
     let d = Utc::now();
     if parsedtimechanges.len() == 2 {
         // 2 times changes the same year ? DST observed
@@ -125,7 +123,7 @@ pub fn worldtime(parsedtimechanges: &Vec<Timechange>) -> Option<Tzdata> {
             && d < parsedtimechanges[1].time;
         let utc_offset = if dst == true { FixedOffset::east(parsedtimechanges[0].gmtoff as i32) } else { FixedOffset::east(parsedtimechanges[1].gmtoff as i32) };
         //println!("{}", dst);
-        Some(Tzdata {
+        Some(Tzinfo{
             utc_datetime: d,
             datetime: d.with_timezone(&utc_offset),
             dst_from: Some(parsedtimechanges[0].time),
@@ -138,7 +136,7 @@ pub fn worldtime(parsedtimechanges: &Vec<Timechange>) -> Option<Tzdata> {
         })
     } else if parsedtimechanges.len()==1 {
         let utc_offset = FixedOffset::east(parsedtimechanges[0].gmtoff as i32);
-        Some(Tzdata {
+        Some(Tzinfo {
             utc_datetime: d,
             datetime: d.with_timezone(&utc_offset),
             dst_from: None,
