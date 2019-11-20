@@ -1,28 +1,44 @@
 //! This library's functions are used to retrieve time changes and date / time characteristics for a given TZ.
+//! Based on data provided by system timezone files and low-level parsing library (https://crates.io/crates/libtzfile)
 
 extern crate libtzfile;
 use chrono::prelude::*;
 use libtzfile::*;
 use std::convert::TryInto;
 
+/// Convenient and human-readable informations about a timezone
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Tzinfo {
+    /// UTC time
     pub utc_datetime: DateTime<Utc>,
+    /// Local time
     pub datetime: DateTime<FixedOffset>,
+    /// Start of DST period
     pub dst_from: Option<DateTime<Utc>>,
+    /// End of DST period
     pub dst_until: Option<DateTime<Utc>>,
+    /// Are we in DST period ?
     pub dst_period: bool,
+    /// Normal offset to GMT, in seconds
     pub raw_offset: isize,
+    /// DST offset to GMT, in seconds
     pub dst_offset: isize,
+    /// current offset to GMT, in +/-HH:MM
     pub utc_offset: FixedOffset,
+    /// Timezone abbreviation
     pub abbreviation: String,
 }
 
+/// The Timechange struct contains one timechange from the parsed TZfile
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Timechange {
+    /// The UTC time and date of the timechange, BEFORE new parameters apply
     pub time: DateTime<Utc>,
+    /// The UPCOMING offset to GMT
     pub gmtoff: isize,
+    /// Is upcoming change is dst ?
     pub isdst: bool,
+    /// TZ abbreviation of upcoming change
     pub abbreviation: String
 }
 
