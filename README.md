@@ -1,5 +1,7 @@
 # TZfile data parse library
 
+[![Current Crates.io Version](https://img.shields.io/crates/v/tzparse.svg)](https://crates.io/crates/tzparse)
+
 This library is using the TZfile reading library (https://crates.io/crates/libtzfile) and adds further parsing to retrieve time changes and characteristics for a given TZ.
 It uses system TZfiles (default location on Linux and Macos /usr/share/zoneinfo). You can override the TZfiles default location with the TZFILES_DIR environment variable.
 There are two functions described below.
