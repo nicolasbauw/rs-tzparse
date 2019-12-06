@@ -6,7 +6,7 @@ edition = "2018"
 license = "GPL-3.0"
 repository = "https://github.com/nicolasbauw/rs-tzparse"
 description = "A high-level library to read timezone information files and return timechanges (ie. daylight saving time) and human readable data about a timezone."
-keywords = ["timezone", "tzfiles", "TZIF", "daylight saving time", "dst"]
+keywords = ["timezone", "tzfiles", "time", "changes", "dst"]
 categories = ["parsing"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
