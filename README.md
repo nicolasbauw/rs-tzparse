@@ -2,7 +2,7 @@
 
 [![Current Crates.io Version](https://img.shields.io/crates/v/tzparse.svg)](https://crates.io/crates/tzparse)
 
-This library is using the TZfile reading library (https://crates.io/crates/libtzfile) and adds further parsing to retrieve time changes and characteristics for a given TZ.
+This library is using the TZfile parsing library (https://crates.io/crates/libtzfile) and adds further parsing to retrieve time changes and characteristics for a given TZ.
 It uses system TZfiles (default location on Linux and Macos /usr/share/zoneinfo). You can override the TZfiles default location with the TZFILES_DIR environment variable.
 There are two functions described below.
 See also the world-time-api (https://github.com/nicolasbauw/world-time-api)
@@ -26,14 +26,8 @@ raw_offset: 3600, dst_offset: 7200, utc_offset: +02:00, abbreviation: "CEST" }
 Add the lib in dependencies:
 
 ````
-tzparse = "0.3.0"
+tzparse = "0.3.1"
 ````
-
-Or if you want to use git repo:
-
-```
-tzparse = { git = "https://github.com/nicolasbauw/rs-tzparse.git" }
-```
 
 Code example:
 

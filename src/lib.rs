@@ -1,6 +1,6 @@
 //! This library's functions are used to retrieve time changes and date/time characteristics for a given TZ.
 //! Based on data provided by system timezone files and [low-level parsing library](https://crates.io/crates/libtzfile).
-//! System TZfiles default location can be overriden  with the TZFILES_DIR environment variable.
+//! System TZfiles default location can be overriden with the TZFILES_DIR environment variable.
 //!
 //! There are two functions, one using the other's result:
 //! 
@@ -31,7 +31,6 @@
 
 extern crate libtzfile;
 use chrono::prelude::*;
-use libtzfile::*;
 use std::convert::TryInto;
 
 /// Convenient and human-readable informations about a timezone.
@@ -72,28 +71,11 @@ pub struct Timechange {
 
 /// Returns year's (current year is default) timechanges for a timezone.
 pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<Timechange>> {
-    // Opens TZfile
-    let buffer = match Tzfile::read(&requested_timezone) {
-        Ok(b) => b,
-        Err(_e) => {
-            //println!("{}", e);
-            return None;
-        }
+    // low-level parse of tzfile
+    let timezone = match libtzfile::parse(requested_timezone) {
+        Ok(tz) => tz,
+        Err(_) => return None
     };
-
-    // Parses TZfile header
-    let header = Tzfile::parse_header(&buffer);
-
-    // Parses file content
-    let timezone = match header {
-        Ok(h) => h.parse(&buffer),
-        Err(_e) => {
-            //println!("{}", e);
-            return None;
-        }
-    };
-
-    //println!("{:?}", timezone);
 
     // used to store timechange indices
     let mut timechanges = Vec::new();
