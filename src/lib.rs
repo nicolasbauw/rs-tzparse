@@ -6,6 +6,8 @@
 //! 
 //! get_timechanges obtains time changes for specified year.
 //! get_zoneinfo further parses the data to provide useful and human-readable output.
+//! 
+//! This crate is the base of my [world time API](https://github.com/nicolasbauw/world-time-api).
 //!
 //! Example with get_zoneinfo:
 //! ```
@@ -20,14 +22,16 @@
 //! ```
 //!
 //! Outputs:
-//!
-//! { utc_datetime: 2019-09-27T07:04:09.366157Z, datetime: 2019-09-27T09:04:09.366157+02:00, dst_from: Some(2019-03-31T01:00:00Z), dst_until: Some(2019-10-27T01:00:00Z),
+//! ```
+//! { utc_datetime: 2019-09-27T07:04:09.366157Z, datetime: 2019-09-27T09:04:09.366157+02:00,
+//! dst_from: Some(2019-03-31T01:00:00Z), dst_until: Some(2019-10-27T01:00:00Z),
 //! raw_offset: 3600, dst_offset: 7200, utc_offset: +02:00, abbreviation: "CEST" }
-//!
-//! The get_timechanges ouputs:
-//!
+//! ```
+//! The get_timechanges used alone ouputs:
+//! ```
 //! [Timechange { time: 2019-03-31T01:00:00Z, gmtoff: 7200, isdst: true, abbreviation: "CEST" },
 //! Timechange { time: 2019-10-27T01:00:00Z, gmtoff: 3600, isdst: false, abbreviation: "CET" }]
+//! ```
 
 extern crate libtzfile;
 use chrono::prelude::*;
