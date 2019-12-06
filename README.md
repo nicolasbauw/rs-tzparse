@@ -26,7 +26,7 @@ raw_offset: 3600, dst_offset: 7200, utc_offset: +02:00, abbreviation: "CEST" }
 Add the lib in dependencies:
 
 ````
-tzparse = "0.3.1"
+tzparse = "0.3.2"
 ````
 
 Code example:
