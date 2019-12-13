@@ -74,6 +74,7 @@ pub struct Timechange {
 }
 
 /// Returns year's (current year is default) timechanges for a timezone.
+/// If there's no timechange for selected year, returns the last occured timechange.
 pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<Timechange>> {
     // low-level parse of tzfile
     let timezone = match libtzfile::parse(requested_timezone) {
