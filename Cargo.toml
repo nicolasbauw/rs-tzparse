@@ -1,11 +1,11 @@
 [package]
 name = "tzparse"
-version = "0.3.3"
+version = "0.3.4"
 authors = ["Nicolas BAUW <nbauw@hotmail.com>"]
 edition = "2018"
 license = "GPL-3.0"
 repository = "https://github.com/nicolasbauw/rs-tzparse"
-description = "A high-level library to read timezone information files and return timechanges (ie. daylight saving time) and human readable data about a timezone."
+description = "This high-level library reads system timezone information files and returns timechanges (ie. daylight saving time) and human readable data about a timezone."
 keywords = ["timezone", "tzfiles", "time", "changes", "dst"]
 categories = ["date-and-time", "parsing"]
 
@@ -15,5 +15,5 @@ categories = ["date-and-time", "parsing"]
 chrono = "0.4"
 
 [dependencies.libtzfile]
-version = "0.5.1"
+version = "1.0.0"
 features = ["with-chrono"]
