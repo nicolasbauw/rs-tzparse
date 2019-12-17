@@ -4,11 +4,10 @@
 //!
 //! There are two functions, one using the other's result:
 //! 
-//! get_timechanges obtains time changes for specified year.
-//! get_zoneinfo further parses the data to provide useful and human-readable output.
-//! 
-//! This crate is the base of my [world time API](https://github.com/nicolasbauw/world-time-api).
+//! `get_timechanges` obtains time changes for specified year.
 //!
+//! `get_zoneinfo` further parses the data to provide useful and human-readable output.
+//! 
 //! Example with get_zoneinfo:
 //! ```
 //! extern crate tzparse;
