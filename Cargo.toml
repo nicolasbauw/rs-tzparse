@@ -1,6 +1,6 @@
 [package]
 name = "tzparse"
-version = "0.3.4"
+version = "0.3.5"
 authors = ["Nicolas BAUW <nbauw@hotmail.com>"]
 edition = "2018"
 license = "GPL-3.0"
@@ -15,5 +15,5 @@ categories = ["date-and-time", "parsing"]
 chrono = "0.4"
 
 [dependencies.libtzfile]
-version = "1.0.0"
+version = "1.0.1"
 features = ["with-chrono"]
