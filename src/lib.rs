@@ -3,15 +3,15 @@
 //! System TZfiles default location can be overriden with the TZFILES_DIR environment variable.
 //!
 //! There are two functions, one using the other's result:
-//! 
+//!
 //! `get_timechanges` obtains time changes for specified year.
 //!
 //! `get_zoneinfo` further parses the data to provide useful and human-readable output.
-//! 
+//!
 //! Example with get_zoneinfo:
 //! ```
 //! extern crate tzparse;
-//! 
+//!
 //! fn main() {
 //!     match tzparse::get_timechanges("Europe/Paris", Some(2019)) {
 //!         Some(tz) => println!("{:?}", tzparse::get_zoneinfo(&tz).unwrap()),
@@ -69,7 +69,7 @@ pub struct Timechange {
     /// Is upcoming change dst ?
     pub isdst: bool,
     /// TZ abbreviation of upcoming change
-    pub abbreviation: String
+    pub abbreviation: String,
 }
 
 /// Returns year's (current year is default) timechanges for a timezone.
@@ -78,7 +78,7 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<T
     // low-level parse of tzfile
     let timezone = match libtzfile::parse(requested_timezone) {
         Ok(tz) => tz,
-        Err(_) => return None
+        Err(_) => return None,
     };
 
     // used to store timechange indices
@@ -94,23 +94,27 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<T
         None => {
             let d = Utc::now();
             d.format("%Y").to_string().parse().unwrap()
-                }
+        }
     };
-    
     // for year comparison
-    let currentyearbeg = Utc.ymd(year, 1, 1).and_hms(0, 0, 0);
-    let currentyearend = Utc.ymd(year, 12, 31).and_hms(0, 0, 0);
+    let yearbeg = Utc.ymd(year, 1, 1).and_hms(0, 0, 0);
+    let yearend = Utc.ymd(year, 12, 31).and_hms(0, 0, 0);
 
-    // Get and store the timechange indices
-    for t in 0..timezone.tzh_timecnt_data.len() {
-        if timezone.tzh_timecnt_data[t] > currentyearbeg
-            && timezone.tzh_timecnt_data[t] < currentyearend
-        {
+    // Get and store the timechange indices for requested year
+    if y.is_some() {
+        for t in 0..timezone.tzh_timecnt_data.len() {
+            if timezone.tzh_timecnt_data[t] > yearbeg && timezone.tzh_timecnt_data[t] < yearend {
+                timechanges.push(t);
+            }
+            if timezone.tzh_timecnt_data[t] < yearbeg {
+                nearest_timechange = t.try_into().unwrap();
+            };
+        }
+    } else {
+        // No year requested ? stores all timechanges
+        for t in 0..timezone.tzh_timecnt_data.len() {
             timechanges.push(t);
         }
-        if timezone.tzh_timecnt_data[t] < currentyearbeg {
-            nearest_timechange = t.try_into().unwrap();
-        };
     }
 
     if timechanges.len() != 0 {
@@ -118,18 +122,30 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<T
         for t in 0..timechanges.len() {
             let tc = Timechange {
                 time: timezone.tzh_timecnt_data[timechanges[t]],
-                gmtoff: timezone.tzh_typecnt[timezone.tzh_timecnt_indices[timechanges[t]] as usize].tt_gmtoff,
-                isdst: timezone.tzh_typecnt[timezone.tzh_timecnt_indices[timechanges[t]] as usize].tt_isdst == 1,
-                abbreviation: timezone.tz_abbr[timezone.tzh_typecnt[timezone.tzh_timecnt_indices[timechanges[t]] as usize].tt_abbrind as usize].to_string(),
+                gmtoff: timezone.tzh_typecnt[timezone.tzh_timecnt_indices[timechanges[t]] as usize]
+                    .tt_gmtoff,
+                isdst: timezone.tzh_typecnt[timezone.tzh_timecnt_indices[timechanges[t]] as usize]
+                    .tt_isdst
+                    == 1,
+                abbreviation: timezone.tz_abbr[timezone.tzh_typecnt
+                    [timezone.tzh_timecnt_indices[timechanges[t]] as usize]
+                    .tt_abbrind as usize]
+                    .to_string(),
             };
             parsedtimechanges.push(tc);
         }
     } else {
         let tc = Timechange {
-                time: timezone.tzh_timecnt_data[nearest_timechange],
-                gmtoff: timezone.tzh_typecnt[timezone.tzh_timecnt_indices[nearest_timechange] as usize].tt_gmtoff,
-                isdst: timezone.tzh_typecnt[timezone.tzh_timecnt_indices[nearest_timechange] as usize].tt_isdst == 1,
-                abbreviation: timezone.tz_abbr[timezone.tzh_typecnt[timezone.tzh_timecnt_indices[nearest_timechange] as usize].tt_abbrind as usize].to_string(),
+            time: timezone.tzh_timecnt_data[nearest_timechange],
+            gmtoff: timezone.tzh_typecnt[timezone.tzh_timecnt_indices[nearest_timechange] as usize]
+                .tt_gmtoff,
+            isdst: timezone.tzh_typecnt[timezone.tzh_timecnt_indices[nearest_timechange] as usize]
+                .tt_isdst
+                == 1,
+            abbreviation: timezone.tz_abbr[timezone.tzh_typecnt
+                [timezone.tzh_timecnt_indices[nearest_timechange] as usize]
+                .tt_abbrind as usize]
+                .to_string(),
         };
         parsedtimechanges.push(tc);
     }
@@ -142,11 +158,14 @@ pub fn get_zoneinfo(parsedtimechanges: &Vec<Timechange>) -> Option<Tzinfo> {
     if parsedtimechanges.len() == 2 {
         // 2 times changes the same year ? DST observed
         // Are we in a dst period ? true / false
-        let dst = d > parsedtimechanges[0].time
-            && d < parsedtimechanges[1].time;
-        let utc_offset = if dst == true { FixedOffset::east(parsedtimechanges[0].gmtoff as i32) } else { FixedOffset::east(parsedtimechanges[1].gmtoff as i32) };
+        let dst = d > parsedtimechanges[0].time && d < parsedtimechanges[1].time;
+        let utc_offset = if dst == true {
+            FixedOffset::east(parsedtimechanges[0].gmtoff as i32)
+        } else {
+            FixedOffset::east(parsedtimechanges[1].gmtoff as i32)
+        };
         //println!("{}", dst);
-        Some(Tzinfo{
+        Some(Tzinfo {
             utc_datetime: d,
             datetime: d.with_timezone(&utc_offset),
             dst_from: Some(parsedtimechanges[0].time),
@@ -155,9 +174,13 @@ pub fn get_zoneinfo(parsedtimechanges: &Vec<Timechange>) -> Option<Tzinfo> {
             raw_offset: parsedtimechanges[1].gmtoff,
             dst_offset: parsedtimechanges[0].gmtoff,
             utc_offset: utc_offset,
-            abbreviation: if dst == true { parsedtimechanges[0].abbreviation.clone() } else { parsedtimechanges[1].abbreviation.clone() },
+            abbreviation: if dst == true {
+                parsedtimechanges[0].abbreviation.clone()
+            } else {
+                parsedtimechanges[1].abbreviation.clone()
+            },
         })
-    } else if parsedtimechanges.len()==1 {
+    } else if parsedtimechanges.len() == 1 {
         let utc_offset = FixedOffset::east(parsedtimechanges[0].gmtoff as i32);
         Some(Tzinfo {
             utc_datetime: d,
@@ -170,17 +193,30 @@ pub fn get_zoneinfo(parsedtimechanges: &Vec<Timechange>) -> Option<Tzinfo> {
             utc_offset: utc_offset,
             abbreviation: parsedtimechanges[0].abbreviation.clone(),
         })
-    } else { None }
+    } else {
+        None
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    
     #[test]
     fn zoneinfo() {
-        let tz = vec!(Timechange{time: Utc.ymd(2019, 3, 31).and_hms(1, 0, 0), gmtoff: 7200, isdst: true, abbreviation: "CEST".to_string()},
-            Timechange{time: Utc.ymd(2019, 10, 27).and_hms(1, 0, 0), gmtoff: 3600, isdst: false, abbreviation: "CET".to_string()});
+        let tz = vec![
+            Timechange {
+                time: Utc.ymd(2019, 3, 31).and_hms(1, 0, 0),
+                gmtoff: 7200,
+                isdst: true,
+                abbreviation: "CEST".to_string(),
+            },
+            Timechange {
+                time: Utc.ymd(2019, 10, 27).and_hms(1, 0, 0),
+                gmtoff: 3600,
+                isdst: false,
+                abbreviation: "CET".to_string(),
+            },
+        ];
         assert_eq!(get_timechanges("Europe/Paris", Some(2019)).unwrap(), tz);
     }
 }
