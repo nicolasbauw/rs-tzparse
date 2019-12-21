@@ -8,6 +8,7 @@ repository = "https://github.com/nicolasbauw/rs-tzparse"
 description = "This high-level library reads system timezone information files and returns timechanges (ie. daylight saving time) and human readable data about a timezone."
 keywords = ["timezone", "tzfiles", "time", "changes", "dst"]
 categories = ["date-and-time", "parsing"]
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
