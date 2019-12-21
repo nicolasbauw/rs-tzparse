@@ -88,20 +88,11 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<T
     // Used to store parsed timechanges
     let mut parsedtimechanges = Vec::new();
 
-    // Provided year (or current year by default)
-    let year: i32 = match y {
-        Some(y) => y,
-        None => {
-            let d = Utc::now();
-            d.format("%Y").to_string().parse().unwrap()
-        }
-    };
-    // for year comparison
-    let yearbeg = Utc.ymd(year, 1, 1).and_hms(0, 0, 0);
-    let yearend = Utc.ymd(year, 12, 31).and_hms(0, 0, 0);
-
     // Get and store the timechange indices for requested year
     if y.is_some() {
+        // for year comparison
+        let yearbeg = Utc.ymd(y.unwrap(), 1, 1).and_hms(0, 0, 0);
+        let yearend = Utc.ymd(y.unwrap(), 12, 31).and_hms(0, 0, 0);
         for t in 0..timezone.tzh_timecnt_data.len() {
             if timezone.tzh_timecnt_data[t] > yearbeg && timezone.tzh_timecnt_data[t] < yearend {
                 timechanges.push(t);
@@ -163,7 +154,6 @@ pub fn get_zoneinfo(parsedtimechanges: &Vec<Timechange>) -> Option<Tzinfo> {
         } else {
             FixedOffset::east(parsedtimechanges[1].gmtoff as i32)
         };
-        //println!("{}", dst);
         Some(Tzinfo {
             utc_datetime: d,
             datetime: d.with_timezone(&utc_offset),
