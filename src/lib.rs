@@ -118,7 +118,6 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<T
     }
 
     if timechanges.len() != 0 {
-        //println!("Time changes for specified year at index : {:?}", timechanges);
         for t in 0..timechanges.len() {
             let tc = Timechange {
                 time: timezone.tzh_timecnt_data[timechanges[t]],
