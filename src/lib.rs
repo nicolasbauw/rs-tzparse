@@ -4,7 +4,7 @@
 //!
 //! There are two functions, one using the other's result:
 //!
-//! `get_timechanges` obtains time changes for specified year.
+//! `get_timechanges` obtains time changes for specified year, or all time changes recorded in the TZfile if no year is specified.
 //!
 //! `get_zoneinfo` further parses the data to provide useful and human-readable output.
 //!
@@ -72,8 +72,9 @@ pub struct Timechange {
     pub abbreviation: String,
 }
 
-/// Returns year's (current year is default) timechanges for a timezone.
-/// If there's no timechange for selected year, returns the last occured timechange.
+/// Returns year's timechanges for a timezone.
+/// If there's no timechange for selected year, returns the last occured timechange to see selected year's zone current parameters.
+/// If no year is specified, returns all time changes recorded in the TZfile .
 pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<Timechange>> {
     // low-level parse of tzfile
     let timezone = match libtzfile::parse(requested_timezone) {
