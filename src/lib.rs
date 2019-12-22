@@ -91,9 +91,13 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<T
 
     // Get and store the timechange indices for requested year
     if y.is_some() {
+        let d = Utc::now();
+        let y = y.unwrap();
+        // year = 0 ? actual year is requested
+        let y = if y == 0 { d.format("%Y").to_string().parse().unwrap() } else { y };
         // for year comparison
-        let yearbeg = Utc.ymd(y.unwrap(), 1, 1).and_hms(0, 0, 0);
-        let yearend = Utc.ymd(y.unwrap(), 12, 31).and_hms(0, 0, 0);
+        let yearbeg = Utc.ymd(y, 1, 1).and_hms(0, 0, 0);
+        let yearend = Utc.ymd(y, 12, 31).and_hms(0, 0, 0);
         for t in 0..timezone.tzh_timecnt_data.len() {
             if timezone.tzh_timecnt_data[t] > yearbeg && timezone.tzh_timecnt_data[t] < yearend {
                 timechanges.push(t);
@@ -109,6 +113,7 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<T
         }
     }
 
+    // Populating returned Vec<Timechange>
     if timechanges.len() != 0 {
         for t in 0..timechanges.len() {
             let tc = Timechange {
