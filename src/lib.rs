@@ -10,8 +10,6 @@
 //!
 //! Example with get_zoneinfo:
 //! ```
-//! extern crate tzparse;
-//!
 //! fn main() {
 //!    println!("{:?}", tzparse::get_zoneinfo("Europe/Paris").unwrap());
 //! }
@@ -29,7 +27,6 @@
 //! Timechange { time: 2019-10-27T01:00:00Z, gmtoff: 3600, isdst: false, abbreviation: "CET" }]
 //! ```
 
-extern crate libtzfile;
 use chrono::prelude::*;
 use std::convert::TryInto;
 

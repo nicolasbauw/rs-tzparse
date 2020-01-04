@@ -15,8 +15,6 @@ There are two functions:
 
 Example with get_zoneinfo:
 ```rust
-extern crate tzparse;
-
 fn main() {
    println!("{:?}", tzparse::get_zoneinfo("Europe/Paris").unwrap());
 }
