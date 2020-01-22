@@ -4,14 +4,18 @@
 //!
 //! There are two functions:
 //!
-//! `get_zoneinfo` parses the tzfile to provide useful and human-readable data about the timezone.
+//! `get_zoneinfo` parses the tzfile and returns a Tzinfo struct which provides useful and human-readable data about the timezone
+//! and can be converted to a json string with an optional feature.
 //! 
 //! `get_timechanges` obtains time changes for specified year, or all time changes recorded in the TZfile if no year is specified.
 //!
 //! Example with get_zoneinfo:
-//! ```
+//! ```text
+//! [dependencies]
+//! tzparse = { version = "1.0.0", features=["json"] }
+//!
 //! fn main() {
-//!     println!("{:?}", tzparse::get_zoneinfo("Europe/Paris").unwrap());
+//!     println!("{:?}", tzparse::get_zoneinfo("Europe/Paris").unwrap().to_json().unwrap());
 //! }
 //! ```
 //!
@@ -46,7 +50,7 @@ mod offset_serializer {
 
 /// Convenient and human-readable informations about a timezone.
 #[cfg(feature = "json")]
-#[derive(Debug, PartialEq, Eq, Clone, Serialize)]
+#[derive(Debug, Serialize)]
 pub struct Tzinfo {
     /// Timezone name
     pub timezone: String,
@@ -74,7 +78,7 @@ pub struct Tzinfo {
 }
 
 #[cfg(not(feature = "json"))]
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug)]
 pub struct Tzinfo {
     /// Timezone name
     pub timezone: String,
@@ -101,7 +105,7 @@ pub struct Tzinfo {
 }
 
 /// The Timechange struct contains one timechange from the parsed TZfile.
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq)]
 pub struct Timechange {
     /// The UTC time and date of the timechange, BEFORE new parameters apply
     pub time: DateTime<Utc>,
