@@ -111,7 +111,7 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Result<Vec<T
         let d = Utc::now();
         let y = y.unwrap();
         // year = 0 ? current year is requested
-        let y = if y == 0 { d.format("%Y").to_string().parse().unwrap() } else { y };
+        let y = if y == 0 { d.format("%Y").to_string().parse()? } else { y };
         // for year comparison
         let yearbeg = Utc.ymd(y, 1, 1).and_hms(0, 0, 0);
         let yearend = Utc.ymd(y, 12, 31).and_hms(0, 0, 0);
@@ -180,7 +180,7 @@ pub fn get_zoneinfo(requested_timezone: &str) -> Result<Tzinfo, TzError> {
         };
         Ok(Tzinfo {
             timezone: requested_timezone.to_string(),
-            week_number: d.with_timezone(&utc_offset).format("%V").to_string().parse().unwrap(),
+            week_number: d.with_timezone(&utc_offset).format("%V").to_string().parse()?,
             utc_datetime: d,
             datetime: d.with_timezone(&utc_offset),
             dst_from: Some(parsedtimechanges[0].time),
@@ -199,7 +199,7 @@ pub fn get_zoneinfo(requested_timezone: &str) -> Result<Tzinfo, TzError> {
         let utc_offset = FixedOffset::east(parsedtimechanges[0].gmtoff as i32);
         Ok(Tzinfo {
             timezone: requested_timezone.to_string(),
-            week_number: d.with_timezone(&utc_offset).format("%V").to_string().parse().unwrap(),
+            week_number: d.with_timezone(&utc_offset).format("%V").to_string().parse()?,
             utc_datetime: d,
             datetime: d.with_timezone(&utc_offset),
             dst_from: None,
