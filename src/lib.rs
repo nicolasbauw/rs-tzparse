@@ -29,10 +29,26 @@
 
 use chrono::prelude::*;
 use std::convert::TryInto;
+use serde::Serialize;
+
+mod offset_serializer {
+    use serde::Serialize;
+    fn offset_to_json(t: chrono::FixedOffset) -> String {
+        format!("{:?}", t)
+    }
+ 
+    pub fn serialize<S: serde::Serializer>(time: &chrono::FixedOffset, serializer: S) -> Result<S::Ok, S::Error> {
+        offset_to_json(time.clone()).serialize(serializer)
+    }
+}
 
 /// Convenient and human-readable informations about a timezone.
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Serialize)]
 pub struct Tzinfo {
+    /// Timezone
+    pub timezone: String,
+    /// Week number
+    week_number: i32,
     /// UTC time
     pub utc_datetime: DateTime<Utc>,
     /// Local time
@@ -48,6 +64,7 @@ pub struct Tzinfo {
     /// DST offset to GMT, in seconds
     pub dst_offset: isize,
     /// current offset to GMT, in +/-HH:MM
+    #[serde(with = "offset_serializer")]
     pub utc_offset: FixedOffset,
     /// Timezone abbreviation
     pub abbreviation: String,
@@ -160,6 +177,8 @@ pub fn get_zoneinfo(requested_timezone: &str) -> Option<Tzinfo> {
             FixedOffset::east(parsedtimechanges[1].gmtoff as i32)
         };
         Some(Tzinfo {
+            timezone: requested_timezone.to_string(),
+            week_number: d.with_timezone(&utc_offset).format("%V").to_string().parse().unwrap(),
             utc_datetime: d,
             datetime: d.with_timezone(&utc_offset),
             dst_from: Some(parsedtimechanges[0].time),
@@ -177,6 +196,8 @@ pub fn get_zoneinfo(requested_timezone: &str) -> Option<Tzinfo> {
     } else if parsedtimechanges.len() == 1 {
         let utc_offset = FixedOffset::east(parsedtimechanges[0].gmtoff as i32);
         Some(Tzinfo {
+            timezone: requested_timezone.to_string(),
+            week_number: d.with_timezone(&utc_offset).format("%V").to_string().parse().unwrap(),
             utc_datetime: d,
             datetime: d.with_timezone(&utc_offset),
             dst_from: None,
