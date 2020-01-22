@@ -47,8 +47,6 @@ mod offset_serializer {
 pub struct Tzinfo {
     /// Timezone
     pub timezone: String,
-    /// Week number
-    week_number: i32,
     /// UTC time
     pub utc_datetime: DateTime<Utc>,
     /// Local time
@@ -68,6 +66,8 @@ pub struct Tzinfo {
     pub utc_offset: FixedOffset,
     /// Timezone abbreviation
     pub abbreviation: String,
+    /// Week number
+    week_number: i32,
 }
 
 /// The Timechange struct contains one timechange from the parsed TZfile.
@@ -81,6 +81,12 @@ pub struct Timechange {
     pub isdst: bool,
     /// TZ abbreviation of upcoming change
     pub abbreviation: String,
+}
+
+impl Tzinfo {
+    pub fn json(&self) -> String {
+        serde_json::to_string(&self).unwrap()
+    }
 }
 
 /// Returns year's timechanges for a timezone.
