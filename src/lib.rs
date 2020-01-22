@@ -30,6 +30,7 @@
 use chrono::prelude::*;
 use std::convert::TryInto;
 use serde::Serialize;
+use libtzfile::TzError;
 
 mod offset_serializer {
     use serde::Serialize;
@@ -84,7 +85,7 @@ pub struct Timechange {
 }
 
 impl Tzinfo {
-    pub fn json(&self) -> String {
+    pub fn to_json(&self) -> String {
         serde_json::to_string(&self).unwrap()
     }
 }
@@ -93,12 +94,9 @@ impl Tzinfo {
 /// If year is Some(0), returns current year's timechanges.
 /// If there's no timechange for selected year, returns the last occured timechange to see selected zone's applying parameters.
 /// If no year (None) is specified, returns all time changes recorded in the TZfile .
-pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<Timechange>> {
+pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Result<Vec<Timechange>, TzError> {
     // low-level parse of tzfile
-    let timezone = match libtzfile::parse(requested_timezone) {
-        Ok(tz) => tz,
-        Err(_) => return None,
-    };
+    let timezone = libtzfile::parse(requested_timezone)?;
 
     // used to store timechange indices
     let mut timechanges = Vec::new();
@@ -163,15 +161,12 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Option<Vec<T
         };
         parsedtimechanges.push(tc);
     }
-    Some(parsedtimechanges)
+    Ok(parsedtimechanges)
 }
 
 /// Returns convenient data about a timezone for current date and time.
-pub fn get_zoneinfo(requested_timezone: &str) -> Option<Tzinfo> {
-    let parsedtimechanges = match get_timechanges(requested_timezone, Some(0)) {
-        Some(p) => p,
-        None => return None
-    };
+pub fn get_zoneinfo(requested_timezone: &str) -> Result<Tzinfo, TzError> {
+    let parsedtimechanges = get_timechanges(requested_timezone, Some(0))?;
     let d = Utc::now();
     if parsedtimechanges.len() == 2 {
         // 2 times changes the same year ? DST observed
@@ -182,7 +177,7 @@ pub fn get_zoneinfo(requested_timezone: &str) -> Option<Tzinfo> {
         } else {
             FixedOffset::east(parsedtimechanges[1].gmtoff as i32)
         };
-        Some(Tzinfo {
+        Ok(Tzinfo {
             timezone: requested_timezone.to_string(),
             week_number: d.with_timezone(&utc_offset).format("%V").to_string().parse().unwrap(),
             utc_datetime: d,
@@ -201,7 +196,7 @@ pub fn get_zoneinfo(requested_timezone: &str) -> Option<Tzinfo> {
         })
     } else if parsedtimechanges.len() == 1 {
         let utc_offset = FixedOffset::east(parsedtimechanges[0].gmtoff as i32);
-        Some(Tzinfo {
+        Ok(Tzinfo {
             timezone: requested_timezone.to_string(),
             week_number: d.with_timezone(&utc_offset).format("%V").to_string().parse().unwrap(),
             utc_datetime: d,
@@ -215,7 +210,7 @@ pub fn get_zoneinfo(requested_timezone: &str) -> Option<Tzinfo> {
             abbreviation: parsedtimechanges[0].abbreviation.clone(),
         })
     } else {
-        None
+        Err(TzError::InvalidTimezone)   //TDB : change the error kind to something like "NoDataFound"
     }
 }
 
