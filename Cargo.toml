@@ -6,7 +6,7 @@ edition = "2018"
 license = "GPL-3.0"
 repository = "https://github.com/nicolasbauw/rs-tzparse"
 description = "This high-level library reads IANA system timezone information files and returns timechanges (ie. daylight saving time) and human readable data about a timezone."
-keywords = ["timezone", "tzfiles", "iana", "changes", "dst"]
+keywords = ["timezone", "tzfiles", "iana", "dst", "json"]
 categories = ["date-and-time", "parsing"]
 readme = "README.md"
 

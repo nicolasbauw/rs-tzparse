@@ -1,5 +1,5 @@
 //! This library's functions are used to retrieve time changes and date/time characteristics for a given TZ.
-//! Based on data provided by system timezone files and [low-level parsing library](https://crates.io/crates/libtzfile).
+//! Based on data provided by IANA timezone files and [low-level parsing library](https://crates.io/crates/libtzfile).
 //! System TZfiles default location can be overriden with the TZFILES_DIR environment variable.
 //!
 //! There are two functions:
@@ -15,7 +15,7 @@
 //! tzparse = { version = "1.0.0", features=["json"] }
 //!
 //! fn main() {
-//!     println!("{:?}", tzparse::get_zoneinfo("Europe/Paris").unwrap().to_json().unwrap());
+//!     println!("{}", tzparse::get_zoneinfo("Europe/Paris").unwrap().to_json().unwrap());
 //! }
 //! ```
 //!
@@ -23,13 +23,16 @@
 //! ```text
 //! {"timezone":"Europe/Paris","utc_datetime":"2020-01-22T14:12:36.792898Z","datetime":"2020-01-22T15:12:36.792898+01:00",
 //! "dst_from":"2020-03-29T01:00:00Z","dst_until":"2020-10-25T01:00:00Z","dst_period":false,"raw_offset":3600,
-//! "dst_offset":7200,"utc_offset":"+01:00","abbreviation":"CET","week_number":4
+//! "dst_offset":7200,"utc_offset":"+01:00","abbreviation":"CET","week_number":4}
 //! ```
 //! The get_timechanges function for Europe/Paris in 2019 returns:
 //! ```text
 //! [Timechange { time: 2019-03-31T01:00:00Z, gmtoff: 7200, isdst: true, abbreviation: "CEST" },
 //! Timechange { time: 2019-10-27T01:00:00Z, gmtoff: 3600, isdst: false, abbreviation: "CET" }]
 //! ```
+//! 
+//! Be aware that with 1.0.0 Tzinfo struct and functions have received some changes (2 more fields
+//! and Result instead of Option return types).
 
 use chrono::prelude::*;
 #[cfg(feature = "json")]
