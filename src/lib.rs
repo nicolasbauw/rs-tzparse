@@ -28,7 +28,6 @@
 //! ```
 
 use chrono::prelude::*;
-use std::convert::TryInto;
 use serde::Serialize;
 use libtzfile::TzError;
 
@@ -120,7 +119,7 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Result<Vec<T
                 timechanges.push(t);
             }
             if timezone.tzh_timecnt_data[t] < yearbeg {
-                nearest_timechange = t.try_into().unwrap();
+                nearest_timechange = t;
             };
         }
     } else {
