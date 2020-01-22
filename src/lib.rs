@@ -11,15 +11,15 @@
 //! Example with get_zoneinfo:
 //! ```
 //! fn main() {
-//!    println!("{:?}", tzparse::get_zoneinfo("Europe/Paris").unwrap());
+//!     println!("{}", tzparse::get_zoneinfo("Europe/Paris").unwrap().to_json().unwrap());
 //! }
 //! ```
 //!
 //! Outputs:
 //! ```text
-//! { utc_datetime: 2019-09-27T07:04:09.366157Z, datetime: 2019-09-27T09:04:09.366157+02:00,
-//! dst_from: Some(2019-03-31T01:00:00Z), dst_until: Some(2019-10-27T01:00:00Z),
-//! raw_offset: 3600, dst_offset: 7200, utc_offset: +02:00, abbreviation: "CEST" }
+//! {"timezone":"Europe/Paris","utc_datetime":"2020-01-22T14:12:36.792898Z","datetime":"2020-01-22T15:12:36.792898+01:00",
+//! "dst_from":"2020-03-29T01:00:00Z","dst_until":"2020-10-25T01:00:00Z","dst_period":false,"raw_offset":3600,
+//! "dst_offset":7200,"utc_offset":"+01:00","abbreviation":"CET","week_number":4
 //! ```
 //! The get_timechanges function for Europe/Paris in 2019 returns:
 //! ```text
@@ -46,7 +46,7 @@ mod offset_serializer {
 /// Convenient and human-readable informations about a timezone.
 #[derive(Debug, PartialEq, Eq, Clone, Serialize)]
 pub struct Tzinfo {
-    /// Timezone
+    /// Timezone name
     pub timezone: String,
     /// UTC time
     pub utc_datetime: DateTime<Utc>,
@@ -68,7 +68,7 @@ pub struct Tzinfo {
     /// Timezone abbreviation
     pub abbreviation: String,
     /// Week number
-    week_number: i32,
+    pub week_number: i32,
 }
 
 /// The Timechange struct contains one timechange from the parsed TZfile.
