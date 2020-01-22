@@ -11,7 +11,7 @@
 //! Example with get_zoneinfo:
 //! ```
 //! fn main() {
-//!     println!("{}", tzparse::get_zoneinfo("Europe/Paris").unwrap().to_json().unwrap());
+//!     println!("{:?}", tzparse::get_zoneinfo("Europe/Paris").unwrap());
 //! }
 //! ```
 //!
@@ -28,9 +28,11 @@
 //! ```
 
 use chrono::prelude::*;
+#[cfg(feature = "json")]
 use serde::Serialize;
 use libtzfile::TzError;
 
+#[cfg(feature = "json")]
 mod offset_serializer {
     use serde::Serialize;
     fn offset_to_json(t: chrono::FixedOffset) -> String {
@@ -43,6 +45,7 @@ mod offset_serializer {
 }
 
 /// Convenient and human-readable informations about a timezone.
+#[cfg(feature = "json")]
 #[derive(Debug, PartialEq, Eq, Clone, Serialize)]
 pub struct Tzinfo {
     /// Timezone name
@@ -70,6 +73,33 @@ pub struct Tzinfo {
     pub week_number: i32,
 }
 
+#[cfg(not(feature = "json"))]
+#[derive(Debug, PartialEq, Eq, Clone)]
+pub struct Tzinfo {
+    /// Timezone name
+    pub timezone: String,
+    /// UTC time
+    pub utc_datetime: DateTime<Utc>,
+    /// Local time
+    pub datetime: DateTime<FixedOffset>,
+    /// Start of DST period
+    pub dst_from: Option<DateTime<Utc>>,
+    /// End of DST period
+    pub dst_until: Option<DateTime<Utc>>,
+    /// Are we in DST period ?
+    pub dst_period: bool,
+    /// Normal offset to GMT, in seconds
+    pub raw_offset: isize,
+    /// DST offset to GMT, in seconds
+    pub dst_offset: isize,
+    /// current offset to GMT, in +/-HH:MM
+    pub utc_offset: FixedOffset,
+    /// Timezone abbreviation
+    pub abbreviation: String,
+    /// Week number
+    pub week_number: i32,
+}
+
 /// The Timechange struct contains one timechange from the parsed TZfile.
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct Timechange {
@@ -84,6 +114,7 @@ pub struct Timechange {
 }
 
 /// Transforms the Tzinfo struct to a JSON string
+#[cfg(feature = "json")]
 impl Tzinfo {
     pub fn to_json(&self) -> Result<String, serde_json::error::Error> {
         serde_json::to_string(&self)
