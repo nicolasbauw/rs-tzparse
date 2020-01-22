@@ -1,12 +1,12 @@
 [package]
 name = "tzparse"
-version = "0.5.2"
+version = "1.0.0"
 authors = ["Nicolas BAUW <nbauw@hotmail.com>"]
 edition = "2018"
 license = "GPL-3.0"
 repository = "https://github.com/nicolasbauw/rs-tzparse"
-description = "This high-level library reads system timezone information files and returns timechanges (ie. daylight saving time) and human readable data about a timezone."
-keywords = ["timezone", "tzfiles", "time", "changes", "dst"]
+description = "This high-level library reads IANA system timezone information files and returns timechanges (ie. daylight saving time) and human readable data about a timezone."
+keywords = ["timezone", "tzfiles", "iana", "changes", "dst"]
 categories = ["date-and-time", "parsing"]
 readme = "README.md"
 
@@ -18,5 +18,5 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
 [dependencies.libtzfile]
-version = "1.0.4"
+version = "1.0.5"
 features = ["with-chrono"]
