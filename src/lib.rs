@@ -210,7 +210,7 @@ pub fn get_zoneinfo(requested_timezone: &str) -> Result<Tzinfo, TzError> {
             abbreviation: parsedtimechanges[0].abbreviation.clone(),
         })
     } else {
-        Err(TzError::InvalidTimezone)   //TDB : change the error kind to something like "NoDataFound"
+        Err(TzError::NoData)
     }
 }
 
