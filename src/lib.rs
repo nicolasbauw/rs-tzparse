@@ -85,8 +85,8 @@ pub struct Timechange {
 }
 
 impl Tzinfo {
-    pub fn to_json(&self) -> String {
-        serde_json::to_string(&self).unwrap()
+    pub fn to_json(&self) -> Result<String, serde_json::error::Error> {
+        serde_json::to_string(&self)
     }
 }
 
