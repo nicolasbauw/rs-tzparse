@@ -12,7 +12,7 @@
 //! Example with get_zoneinfo:
 //! ```text
 //! [dependencies]
-//! tzparse = { version = "1.0.1", features=["json"] }
+//! tzparse = { version = "1.0.2", features=["json"] }
 //!
 //! fn main() {
 //!     println!("{}", tzparse::get_zoneinfo("Europe/Paris").unwrap().to_json().unwrap());

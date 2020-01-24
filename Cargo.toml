@@ -1,6 +1,6 @@
 [package]
 name = "tzparse"
-version = "1.0.1"
+version = "1.0.2"
 authors = ["Nicolas BAUW <nbauw@hotmail.com>"]
 edition = "2018"
 license = "GPL-3.0"
@@ -21,5 +21,5 @@ serde_json = { version = "1.0", optional = true }
 json = ["serde", "serde_json", "chrono/serde" ]
 
 [dependencies.libtzfile]
-version = "1.0.5"
+version = "1.0.6"
 features = ["with-chrono"]
