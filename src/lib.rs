@@ -1,5 +1,5 @@
 //! This library's functions are used to retrieve time changes and date/time characteristics for a given TZ.
-//! Based on data provided by IANA timezone files and [low-level parsing library](https://crates.io/crates/libtzfile).
+//! Based on IANA database, system timezone files and [low-level parsing library](https://crates.io/crates/libtzfile).
 //! System TZfiles default location can be overriden with the TZFILES_DIR environment variable.
 //!
 //! There are two functions:
