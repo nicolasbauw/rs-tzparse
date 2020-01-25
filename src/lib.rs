@@ -37,7 +37,7 @@
 use chrono::prelude::*;
 #[cfg(feature = "json")]
 use serde::Serialize;
-use libtzfile::TzError;
+pub use libtzfile::TzError;
 
 #[cfg(feature = "json")]
 mod offset_serializer {
