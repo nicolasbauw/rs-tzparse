@@ -270,15 +270,15 @@ mod tests {
                 time: Utc.ymd(2019, 3, 31).and_hms(1, 0, 0),
                 gmtoff: 7200,
                 isdst: true,
-                abbreviation: "CEST".to_string(),
+                abbreviation: String::from("CEST"),
             },
             Timechange {
                 time: Utc.ymd(2019, 10, 27).and_hms(1, 0, 0),
                 gmtoff: 3600,
                 isdst: false,
-                abbreviation: "CET".to_string(),
+                abbreviation: String::from("CET"),
             },
         ];
-        assert_eq!(get_timechanges("Europe/Paris", Some(2019)).unwrap(), tz);
+        assert_eq!(get_timechanges("/usr/share/zoneinfo/Europe/Paris", Some(2019)).unwrap(), tz);
     }
 }
