@@ -150,8 +150,8 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Result<Vec<T
         // year = 0 ? current year is requested
         let y = if y == 0 { d.format("%Y").to_string().parse()? } else { y };
         // for year comparison
-        let yearbeg = Utc.ymd(y, 1, 1).and_hms(0, 0, 0);
-        let yearend = Utc.ymd(y, 12, 31).and_hms(0, 0, 0);
+        let yearbeg = Utc.ymd(y, 1, 1).and_hms(0, 0, 0).timestamp();
+        let yearend = Utc.ymd(y, 12, 31).and_hms(0, 0, 0).timestamp();
         for t in 0..timezone.tzh_timecnt_data.len() {
             if timezone.tzh_timecnt_data[t] > yearbeg && timezone.tzh_timecnt_data[t] < yearend {
                 timechanges.push(t);
@@ -171,7 +171,7 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Result<Vec<T
     if timechanges.len() != 0 {
         for t in 0..timechanges.len() {
             let tc = Timechange {
-                time: timezone.tzh_timecnt_data[timechanges[t]],
+                time: Utc.timestamp(timezone.tzh_timecnt_data[timechanges[t]], 0),
                 gmtoff: timezone.tzh_typecnt[timezone.tzh_timecnt_indices[timechanges[t]] as usize]
                     .tt_gmtoff,
                 isdst: timezone.tzh_typecnt[timezone.tzh_timecnt_indices[timechanges[t]] as usize]
@@ -186,7 +186,7 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Result<Vec<T
         }
     } else {
         let tc = Timechange {
-            time: timezone.tzh_timecnt_data[nearest_timechange],
+            time: Utc.timestamp(timezone.tzh_timecnt_data[nearest_timechange], 0),
             gmtoff: timezone.tzh_typecnt[timezone.tzh_timecnt_indices[nearest_timechange] as usize]
                 .tt_gmtoff,
             isdst: timezone.tzh_typecnt[timezone.tzh_timecnt_indices[nearest_timechange] as usize]
