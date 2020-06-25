@@ -204,6 +204,14 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Result<Vec<T
 
 /// Returns convenient data about a timezone for current date and time.
 pub fn get_zoneinfo(requested_timezone: &str) -> Result<Tzinfo, TzError> {
+    let mut timezone = String::new();
+    let mut tz: Vec<&str> = requested_timezone.split("/").collect();
+    for _ in 0..(tz.len())-2 {
+        tz.remove(0);
+    }
+    timezone.push_str(tz[0]);
+    timezone.push_str("/");
+    timezone.push_str(tz[1]);
     let parsedtimechanges = get_timechanges(requested_timezone, Some(0))?;
     let d = Utc::now();
     if parsedtimechanges.len() == 2 {
@@ -216,7 +224,7 @@ pub fn get_zoneinfo(requested_timezone: &str) -> Result<Tzinfo, TzError> {
             FixedOffset::east(parsedtimechanges[1].gmtoff as i32)
         };
         Ok(Tzinfo {
-            timezone: requested_timezone.to_string(),
+            timezone: timezone,
             week_number: d.with_timezone(&utc_offset).format("%V").to_string().parse()?,
             utc_datetime: d,
             datetime: d.with_timezone(&utc_offset),
@@ -235,7 +243,7 @@ pub fn get_zoneinfo(requested_timezone: &str) -> Result<Tzinfo, TzError> {
     } else if parsedtimechanges.len() == 1 {
         let utc_offset = FixedOffset::east(parsedtimechanges[0].gmtoff as i32);
         Ok(Tzinfo {
-            timezone: requested_timezone.to_string(),
+            timezone: timezone,
             week_number: d.with_timezone(&utc_offset).format("%V").to_string().parse()?,
             utc_datetime: d,
             datetime: d.with_timezone(&utc_offset),
