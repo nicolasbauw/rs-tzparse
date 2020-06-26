@@ -215,7 +215,10 @@ pub fn get_timechanges(
 /// Returns convenient data about a timezone for current date and time.
 pub fn get_zoneinfo(requested_timezone: &str) -> Result<Tzinfo, TzError> {
     let mut timezone = String::new();
+    #[cfg(not(windows))]
     let mut tz: Vec<&str> = requested_timezone.split("/").collect();
+    #[cfg(windows)]
+    let mut tz: Vec<&str> = requested_timezone.split("\\").collect();
     for _ in 0..(tz.len()) - 2 {
         tz.remove(0);
     }
