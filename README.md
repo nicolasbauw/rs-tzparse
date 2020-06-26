@@ -5,7 +5,6 @@
 
 This library's functions are used to retrieve time changes and date/time characteristics for a given TZ.
 Based on IANA database, system timezone files and [low-level parsing library](https://crates.io/crates/libtzfile).
-System TZfiles default location can be overriden with the TZFILES_DIR environment variable.
 
 There are two functions:
 
@@ -17,10 +16,10 @@ and can be converted to a json string with an optional feature.
 Example with get_zoneinfo:
 ```
 [dependencies]
-tzparse = { version = "1.0", features=["json"] }
+tzparse = { version = "1.1", features=["json"] }
 
 fn main() {
-    println!("{}", tzparse::get_zoneinfo("Europe/Paris").unwrap().to_json().unwrap());
+    println!("{}", tzparse::get_zoneinfo("/usr/share/zoneinfo/Europe/Paris").unwrap().to_json().unwrap());
 }
 ```
 
@@ -35,8 +34,5 @@ The get_timechanges function for Europe/Paris in 2019 returns:
 [Timechange { time: 2019-03-31T01:00:00Z, gmtoff: 7200, isdst: true, abbreviation: "CEST" },
 Timechange { time: 2019-10-27T01:00:00Z, gmtoff: 3600, isdst: false, abbreviation: "CET" }]
 ```
-
-Be aware that with 1.0.0 Tzinfo struct and functions have received some changes (2 more fields
- and Result instead of Option return types).
 
 License: GPL-3.0
