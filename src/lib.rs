@@ -14,7 +14,7 @@
 //! tzparse = { version = "1.1", features=["json"] }
 //! ```
 //! 
-//! ```
+//! ```text
 //! fn main() {
 //!     println!("{}", tzparse::get_zoneinfo("/usr/share/zoneinfo/Europe/Paris").unwrap().to_json().unwrap());
 //! }
