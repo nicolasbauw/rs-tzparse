@@ -209,8 +209,8 @@ pub fn get_zoneinfo(requested_timezone: &str) -> Result<Tzinfo, TzError> {
     for _ in 0..(tz.len())-2 {
         tz.remove(0);
     }
-    timezone.push_str(tz[0]);
-    timezone.push_str("/");
+    if tz[0] != "zoneinfo" {timezone.push_str(tz[0]);
+    timezone.push_str("/");}
     timezone.push_str(tz[1]);
     let parsedtimechanges = get_timechanges(requested_timezone, Some(0))?;
     let d = Utc::now();
