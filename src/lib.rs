@@ -6,7 +6,7 @@
 //!
 //! `get_zoneinfo` parses the tzfile and returns a Tzinfo struct which provides useful and human-readable data about the timezone
 //! and can be converted to a json string with an optional feature.
-//! 
+//!
 //! `get_timechanges` obtains time changes for specified year, or all time changes recorded in the TZfile if no year is specified.
 //!
 //! Example with get_zoneinfo:
@@ -30,14 +30,14 @@
 //! [Timechange { time: 2019-03-31T01:00:00Z, gmtoff: 7200, isdst: true, abbreviation: "CEST" },
 //! Timechange { time: 2019-10-27T01:00:00Z, gmtoff: 3600, isdst: false, abbreviation: "CET" }]
 //! ```
-//! 
+//!
 //! Be aware that with 1.0.0 Tzinfo struct and functions have received some changes (2 more fields
 //! and Result instead of Option return types).
 
 use chrono::prelude::*;
+pub use libtzfile::TzError;
 #[cfg(feature = "json")]
 use serde::Serialize;
-pub use libtzfile::TzError;
 
 #[cfg(feature = "json")]
 mod offset_serializer {
@@ -45,8 +45,11 @@ mod offset_serializer {
     fn offset_to_json(t: chrono::FixedOffset) -> String {
         format!("{:?}", t)
     }
- 
-    pub fn serialize<S: serde::Serializer>(time: &chrono::FixedOffset, serializer: S) -> Result<S::Ok, S::Error> {
+
+    pub fn serialize<S: serde::Serializer>(
+        time: &chrono::FixedOffset,
+        serializer: S,
+    ) -> Result<S::Ok, S::Error> {
         offset_to_json(time.clone()).serialize(serializer)
     }
 }
@@ -132,7 +135,10 @@ impl Tzinfo {
 /// If year is Some(0), returns current year's timechanges.
 /// If there's no timechange for selected year, returns the last occured timechange to see selected zone's applying parameters.
 /// If no year (None) is specified, returns all time changes recorded in the TZfile .
-pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Result<Vec<Timechange>, TzError> {
+pub fn get_timechanges(
+    requested_timezone: &str,
+    y: Option<i32>,
+) -> Result<Vec<Timechange>, TzError> {
     // low-level parse of tzfile
     let timezone = libtzfile::parse(requested_timezone)?;
 
@@ -148,7 +154,11 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Result<Vec<T
         let d = Utc::now();
         let y = y.unwrap();
         // year = 0 ? current year is requested
-        let y = if y == 0 { d.format("%Y").to_string().parse()? } else { y };
+        let y = if y == 0 {
+            d.format("%Y").to_string().parse()?
+        } else {
+            y
+        };
         // for year comparison
         let yearbeg = Utc.ymd(y, 1, 1).and_hms(0, 0, 0).timestamp();
         let yearend = Utc.ymd(y, 12, 31).and_hms(0, 0, 0).timestamp();
@@ -206,11 +216,13 @@ pub fn get_timechanges(requested_timezone: &str, y: Option<i32>) -> Result<Vec<T
 pub fn get_zoneinfo(requested_timezone: &str) -> Result<Tzinfo, TzError> {
     let mut timezone = String::new();
     let mut tz: Vec<&str> = requested_timezone.split("/").collect();
-    for _ in 0..(tz.len())-2 {
+    for _ in 0..(tz.len()) - 2 {
         tz.remove(0);
     }
-    if tz[0] != "zoneinfo" {timezone.push_str(tz[0]);
-    timezone.push_str("/");}
+    if tz[0] != "zoneinfo" {
+        timezone.push_str(tz[0]);
+        timezone.push_str("/");
+    }
     timezone.push_str(tz[1]);
     let parsedtimechanges = get_timechanges(requested_timezone, Some(0))?;
     let d = Utc::now();
@@ -225,7 +237,11 @@ pub fn get_zoneinfo(requested_timezone: &str) -> Result<Tzinfo, TzError> {
         };
         Ok(Tzinfo {
             timezone: timezone,
-            week_number: d.with_timezone(&utc_offset).format("%V").to_string().parse()?,
+            week_number: d
+                .with_timezone(&utc_offset)
+                .format("%V")
+                .to_string()
+                .parse()?,
             utc_datetime: d,
             datetime: d.with_timezone(&utc_offset),
             dst_from: Some(parsedtimechanges[0].time),
@@ -244,7 +260,11 @@ pub fn get_zoneinfo(requested_timezone: &str) -> Result<Tzinfo, TzError> {
         let utc_offset = FixedOffset::east(parsedtimechanges[0].gmtoff as i32);
         Ok(Tzinfo {
             timezone: timezone,
-            week_number: d.with_timezone(&utc_offset).format("%V").to_string().parse()?,
+            week_number: d
+                .with_timezone(&utc_offset)
+                .format("%V")
+                .to_string()
+                .parse()?,
             utc_datetime: d,
             datetime: d.with_timezone(&utc_offset),
             dst_from: None,
@@ -279,6 +299,9 @@ mod tests {
                 abbreviation: String::from("CET"),
             },
         ];
-        assert_eq!(get_timechanges("/usr/share/zoneinfo/Europe/Paris", Some(2019)).unwrap(), tz);
+        assert_eq!(
+            get_timechanges("/usr/share/zoneinfo/Europe/Paris", Some(2019)).unwrap(),
+            tz
+        );
     }
 }
