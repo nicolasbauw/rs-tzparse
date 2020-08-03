@@ -126,7 +126,7 @@ pub struct Timechange {
 #[cfg(feature = "json")]
 impl Tzinfo {
     pub fn to_json(&self) -> Result<String, serde_json::error::Error> {
-        serde_json::to_string(&self)
+        serde_json::to_string(self)
     }
 }
 
