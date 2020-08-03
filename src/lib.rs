@@ -172,7 +172,8 @@ pub fn get_timechanges(
     } else {
         // No year requested ? stores all timechanges
         for t in 0..timezone.tzh_timecnt_data.len() {
-            timechanges.push(t);
+            /* patch : chrono panics on an overflowing timestamp, and a 0xF800000000000000 timestamp is present in some Debian 10 TZfiles.*/
+            if timezone.tzh_timecnt_data[t] != -576460752303423488 { timechanges.push(t) };
         }
     }
 
