@@ -304,8 +304,14 @@ mod tests {
                 abbreviation: String::from("CET"),
             },
         ];
+        #[cfg(not(windows))]
         assert_eq!(
             get_timechanges("/usr/share/zoneinfo/Europe/Paris", Some(2019)).unwrap(),
+            tz
+        );
+        #[cfg(windows)]
+        assert_eq!(
+            get_timechanges("c:\\Users\\nbauw\\Dev\\zoneinfo\\Europe\\Paris", Some(2019)).unwrap(),
             tz
         );
     }
@@ -325,15 +331,24 @@ mod tests {
             Timechange { time: Utc.ymd(1967, 04, 30).and_hms(9, 0, 0), gmtoff: -21600, isdst: true, abbreviation: String::from("MDT") },
             Timechange { time: Utc.ymd(1967, 10, 29).and_hms(8, 0, 0), gmtoff: -25200, isdst: false, abbreviation: String::from("MST") }
         ];
+        #[cfg(not(windows))]
         assert_eq!(
             get_timechanges("/usr/share/zoneinfo/America/Phoenix", None).unwrap(),
+            tz
+        );
+        #[cfg(windows)]
+        assert_eq!(
+            get_timechanges("c:\\Users\\nbauw\\Dev\\zoneinfo\\America\\Phoenix", None).unwrap(),
             tz
         );
     }
 
     #[test]
     fn zoneinfo() {
+        #[cfg(not(windows))]
         let tztest = get_zoneinfo("/usr/share/zoneinfo/Europe/Paris").unwrap();
+        #[cfg(windows)]
+        let tztest = get_zoneinfo("c:\\Users\\nbauw\\Dev\\zoneinfo\\Europe\\Paris").unwrap();
         assert_eq!(tztest.timezone, String::from("Europe/Paris"));
         assert_eq!(tztest.raw_offset, 3600);
         assert_eq!(tztest.dst_offset, 7200);
