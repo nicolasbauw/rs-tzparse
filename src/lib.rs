@@ -1,5 +1,7 @@
-//! This library's functions are used to retrieve time changes and date/time characteristics for a given TZ.
-//! Based on IANA database, system timezone files and [low-level parsing library](https://crates.io/crates/libtzfile).
+//! **PLEASE NOTE** This library is no longer maintained and has been merged with the [libtzfile library](https://crates.io/crates/libtzfile).
+//! 
+//! This library's functions are used to retrieve transition times and date/time characteristics for a given TZ.
+//! Based on IANA database, system timezone files and [libtzfile library](https://crates.io/crates/libtzfile) that you should use instead.
 //!
 //! There are two functions:
 //!
