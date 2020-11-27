@@ -3,8 +3,10 @@
 [![Current Crates.io Version](https://img.shields.io/crates/v/tzparse.svg)](https://crates.io/crates/tzparse)
 [![Downloads badge](https://img.shields.io/crates/d/tzparse.svg)](https://crates.io/crates/tzparse)
 
-This library's functions are used to retrieve time changes and date/time characteristics for a given TZ.
-Based on IANA database, system timezone files and [low-level parsing library](https://crates.io/crates/libtzfile).
+**PLEASE NOTE** This library is no longer maintained and has been merged with the [libtzfile library](https://crates.io/crates/libtzfile).
+
+This library's functions are used to retrieve transition times and date/time characteristics for a given TZ.
+Based on IANA database, system timezone files and [libtzfile library](https://crates.io/crates/libtzfile) that you should use instead.
 
 There are two functions:
 
@@ -17,7 +19,9 @@ Example with get_zoneinfo:
 ```
 [dependencies]
 tzparse = { version = "1.1", features=["json"] }
+```
 
+```
 fn main() {
     println!("{}", tzparse::get_zoneinfo("/usr/share/zoneinfo/Europe/Paris").unwrap().to_json().unwrap());
 }
@@ -34,5 +38,6 @@ The get_timechanges function for Europe/Paris in 2019 returns:
 [Timechange { time: 2019-03-31T01:00:00Z, gmtoff: 7200, isdst: true, abbreviation: "CEST" },
 Timechange { time: 2019-10-27T01:00:00Z, gmtoff: 3600, isdst: false, abbreviation: "CET" }]
 ```
+
 
 License: GPL-3.0
